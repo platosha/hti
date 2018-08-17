@@ -1,0 +1,24 @@
+{
+  "name": "hti",
+  "version": "0.0.0",
+  "description": "The (incomplete) HTML Template Instantiation Polyfill",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/platosha/hti.git"
+  },
+  "keywords": [
+    "html",
+    "template",
+    "web-components"
+  ],
+  "author": "Anton Platonov <platosha@gmail.com>",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/platosha/hti/issues"
+  },
+  "homepage": "https://github.com/platosha/hti#readme"
+}
