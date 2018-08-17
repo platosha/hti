@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="../components/wct-browser-legacy/browser.js"></script>
+  <script type="module" src="../components/@polymer/test-fixture/test-fixture.js"></script>
+  <script src="../hti.js"></script>
+</head>
+<body>
+  <test-fixture id="basics">
+    <template>
+      <template>
+        <div
+            attr="{{attrExpr}}"
+            partialAttr="partial {{partialAttrExpr}} oneMore {{oneModeAttrExpr}} ending"
+            >{{textExpr}}<span>partial {{partialTextExpr}} oneMore {{oneMoreTextExpr}} ending</span>
+          <!--{{commentExpr}}-->
+          <!--partial {{partialCommentExpr}} oneMore {{oneMoreTextExpr}} ending-->
+        </div>
+      </template>
+    </template>
+  </test-fixture>
+
+  <script>
+    describe('basics', () => {
+      let template;
+
+      beforeEach(() => template = fixture('basics'));
+
+      describe('TemplateInstance', () => {
+        it('should subclass DocumentFragment', () => {
+          expect(TemplateInstance.prototype).to.be.instanceof(DocumentFragment);
+        });
+
+        it('should have update method', () => {
+          expect(TemplateInstance.prototype.update instanceof Function).to.be.true;
+        });
+      });
+
+      describe('HTMLTemplateElement::createInstance', () => {
+        it('should return a TemplateInstance', () => {
+          const inst = template.createInstance();
+          expect(inst).to.be.instanceof(TemplateInstance);
+        });
+      });
+    });
+  </script>
+</body>
+</html>
