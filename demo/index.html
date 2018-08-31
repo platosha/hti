@@ -3,31 +3,33 @@
 <head>
   <meta charset="UTF-8">
   <title></title>
+  <script src="../components/@webcomponents/template/template.js"></script>
   <script src="../hti.js"></script>
 </head>
 <body>
 
   <template>
     <h1>Hello, {{thing}}!</h1>
-    <p>{{
-      html
-    }}</p>
+    <p>{{ html }}, {{thing}}.</p>
     <input readonly value="{{date}}" size="40"></label>
+    <!-- UA: {{userAgent}} -->
     <p>© <a href="mailto:{{author}}?subj=hti">{{author}}</a></p>
   </template>
 
   <script>
-    const instance = document.querySelector('template').createInstance();
-    document.body.appendChild(instance);
-    setInterval(() => {
-      instance.update({
-        thing: 'world',
-        html: '<html-tags>Are escaped!</html-tags>',
-        userAgent: navigator.userAgent,
-        date: new Date(),
-        author: 'Anton Platonov <platosha@gmail.com>'
-      });
-    }, 1000);
+    addEventListener('DOMContentLoaded', () => {
+      const instance = document.querySelector('template').createInstance();
+      document.body.appendChild(instance);
+      setInterval(() => {
+        instance.update({
+          thing: 'world',
+          html: '<html-tags>Are escaped!</html-tags>',
+          userAgent: navigator.userAgent,
+          date: new Date(),
+          author: 'Anton Platonov <platosha@gmail.com>'
+        });
+      }, 1000);
+    });
   </script>
 </body>
 </html>

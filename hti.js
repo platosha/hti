@@ -34,10 +34,21 @@
     }
   }
 
-  class TemplateInstance extends DocumentFragment {
+  // FIXME: ES5 fix: make extendable DocumentFragment function (MSIE only)
+  let _DocumentFragment = window.DocumentFragment;
+  if (/Trident/.test(navigator.userAgent)) {
+    _DocumentFragment = function() {};
+    _DocumentFragment.prototype = Object.create(window.DocumentFragment.prototype,
+      {constructor: {value: _DocumentFragment, configurable: true, writable: true}});
+  }
+
+  class TemplateInstance extends _DocumentFragment {
     constructor() {
       super();
       privates.set(this, {parts: [], updates: new Set()});
+
+      // FIXME: MSEdge weirdness
+      Object.setPrototypeOf(this, TemplateInstance.prototype);
     }
 
     update(state) {
@@ -90,7 +101,7 @@
   }
 
   function createInstance(state) {
-    const instance = new TemplateInstance;
+    const instance = new TemplateInstance();
     instance.appendChild(document.importNode(this.content, true));
     const instancePrivates = privates.get(instance);
     const walker = document.createTreeWalker(instance);
@@ -133,5 +144,5 @@
   }
 
   window.TemplateInstance = TemplateInstance;
-  HTMLTemplateElement.prototype.createInstance = createInstance;
+  window.HTMLTemplateElement.prototype.createInstance = createInstance;
 }
