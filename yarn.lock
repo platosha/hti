@@ -24,6 +24,10 @@
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/@webcomponents/webcomponentsjs/-/webcomponentsjs-2.0.4.tgz#fe18c288f99b7103e9ae7a766020f9702cedcc08"
 
+"@webcomponents/webcomponentsjs@^2.1.1":
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/@webcomponents/webcomponentsjs/-/webcomponentsjs-2.1.1.tgz#2884f5a878d0823dd6b3a15a06fb0382c3012d88"
+
 accessibility-developer-tools@^2.12.0:
   version "2.12.0"
   resolved "https://registry.yarnpkg.com/accessibility-developer-tools/-/accessibility-developer-tools-2.12.0.tgz#3da0cce9d6ec6373964b84f35db7cfc3df7ab514"

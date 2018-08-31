@@ -2,14 +2,15 @@
 <html>
 <head>
   <meta charset="utf-8">
+  <script src="../components/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
   <script src="../components/wct-browser-legacy/browser.js"></script>
-  <script type="module" src="../components/@polymer/test-fixture/test-fixture.js"></script>
   <script src="../hti.js"></script>
 </head>
 <body>
   <test-fixture id="basics">
     <template>
       <template>
+        <span>static</span>
         <div
             attr="{{attrExpr}}"
             partialAttr="partial {{partialAttrExpr}} oneMore {{oneModeAttrExpr}} ending"
@@ -21,13 +22,26 @@
     </template>
   </test-fixture>
 
+  <test-fixture id="container">
+    <template>
+      <div><span>initial</span></div>
+    </template>
+  </test-fixture>
+
   <script>
     describe('basics', () => {
       let template;
 
       beforeEach(() => template = fixture('basics'));
 
-      describe('TemplateInstance', () => {
+      describe('HTMLTemplateElement::createInstance', () => {
+        it('should return a TemplateInstance', () => {
+          const inst = template.createInstance();
+          expect(inst).to.be.instanceof(TemplateInstance);
+        });
+      });
+
+      describe('TemplateInstance class', () => {
         it('should subclass DocumentFragment', () => {
           expect(TemplateInstance.prototype).to.be.instanceof(DocumentFragment);
         });
@@ -37,10 +51,134 @@
         });
       });
 
-      describe('HTMLTemplateElement::createInstance', () => {
-        it('should return a TemplateInstance', () => {
-          const inst = template.createInstance();
-          expect(inst).to.be.instanceof(TemplateInstance);
+      describe('TemplateInstance instance', () => {
+        const getContents = div => {
+          const [
+            simpleText, wrappedComplexText,
+            _1, simpleComment,
+            _2, complexComment
+          ] = div.childNodes;
+          return {simpleText, wrappedComplexText, simpleComment, complexComment};
+        };
+
+        let instance, container;
+
+        describe('initial content with default state', () => {
+          beforeEach(() => instance = template.createInstance());
+
+          it('should be accepted as a DOM Node', () => {
+            container = fixture('container');
+            expect(() => {
+              container.appendChild(instance);
+            }).to.not.throw();
+          });
+
+          it('should have static element', () => {
+            expect(instance.children[0].localName).to.equal('span');
+            expect(instance.children[0].textContent).to.equal('static');
+          });
+
+          it('should have complex element', () => {
+            expect(instance.children[1].localName).to.equal('div');
+          });
+
+          it('should have simple attribute value', () => {
+            const div = instance.lastElementChild;
+            expect(div.getAttribute('attr')).to.equal('');
+          });
+
+          it('should have partial attribute value', () => {
+            const div = instance.lastElementChild;
+            expect(div.getAttribute('partialAttr')).to.equal('partial  oneMore  ending');
+          });
+
+          it('should have simple text node value', () => {
+            const {simpleText} = getContents(instance.lastElementChild);
+            expect(simpleText.nodeType).to.equal(Node.TEXT_NODE);
+            expect(simpleText.nodeValue).to.equal('');
+          });
+
+          it('should have partial text node value', () => {
+            const {wrappedComplexText} = getContents(instance.lastElementChild);
+            expect(wrappedComplexText.localName).to.equal('span');
+
+            const textNode = wrappedComplexText.firstChild;
+            expect(textNode.nodeType).to.equal(Node.TEXT_NODE);
+            expect(textNode.nodeValue).to.equal('partial  oneMore  ending');
+          });
+
+          it('should have simple comment node', () => {
+            const {simpleComment} = getContents(instance.lastElementChild);
+            expect(simpleComment.nodeType).to.equal(Node.COMMENT_NODE);
+            expect(simpleComment.nodeValue).to.equal('');
+          });
+
+          it('should have complex comment node', () => {
+            const {complexComment} = getContents(instance.lastElementChild);
+            expect(complexComment.nodeType).to.equal(Node.COMMENT_NODE);
+            expect(complexComment.nodeValue).to.equal('partial  oneMore  ending');
+          });
+        });
+
+        describe('initial content given partial state', () => {
+          beforeEach(() => instance = template.createInstance({
+            partialAttrExpr: 'partialAttrValue',
+            partialTextExpr: 'partialTextValue',
+            partialCommentExpr: 'partialCommentValue'
+          }));
+
+          it('should be accepted as a DOM Node', () => {
+            container = fixture('container');
+            expect(() => {
+              container.appendChild(instance);
+            }).to.not.throw();
+          });
+
+          it('should have static element', () => {
+            expect(instance.children[0].localName).to.equal('span');
+            expect(instance.children[0].textContent).to.equal('static');
+          });
+
+          it('should have complex element', () => {
+            expect(instance.children[1].localName).to.equal('div');
+          });
+
+          it('should have simple attribute value', () => {
+            const div = instance.lastElementChild;
+            expect(div.getAttribute('attr')).to.equal('');
+          });
+
+          it('should have partial attribute value', () => {
+            const div = instance.lastElementChild;
+            expect(div.getAttribute('partialAttr')).to.equal('partial partialAttrValue oneMore undefined ending');
+          });
+
+          it('should have simple text node value', () => {
+            const {simpleText} = getContents(instance.lastElementChild);
+            expect(simpleText.nodeType).to.equal(Node.TEXT_NODE);
+            expect(simpleText.nodeValue).to.equal('');
+          });
+
+          it('should have partial text node value', () => {
+            const {wrappedComplexText} = getContents(instance.lastElementChild);
+            expect(wrappedComplexText.localName).to.equal('span');
+
+            const textNode = wrappedComplexText.firstChild;
+            expect(textNode.nodeType).to.equal(Node.TEXT_NODE);
+            expect(textNode.nodeValue).to.equal('partial partialTextValue oneMore undefined ending');
+          });
+
+          it('should have simple comment node', () => {
+            const {simpleComment} = getContents(instance.lastElementChild);
+            expect(simpleComment.nodeType).to.equal(Node.COMMENT_NODE);
+            expect(simpleComment.nodeValue).to.equal('');
+          });
+
+          it('should have partial comment node', () => {
+            const {complexComment} = getContents(instance.lastElementChild);
+            expect(complexComment.nodeType).to.equal(Node.COMMENT_NODE);
+            expect(complexComment.nodeValue).to.equal('partial partialCommentValue oneMore undefined ending');
+          });
         });
       });
     });
